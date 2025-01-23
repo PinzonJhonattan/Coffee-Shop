@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Detalles de la Orden</h2>
+
+    {% if order %}
+        <div class="mb-2">
+            <span class="text-lg font-semibold">Usuario: </span>
+            <span class="text-lg">{{ order.user.username|title }}</span>
+        </div>
+        <div class="mb-2">
+            <span class="text-lg font-semibold">Fecha de la Orden: </span>
+            <span class="text-lg">{{ order.order_date|date:"F j, Y H:i" }}</span>
+        </div>
+
+        <div class="mt-6">
+            <h3 class="text-xl font-bold mb-2">Artículos en tu orden:</h3>
+            {% if order.orderproduct_set.all %}
+                <div class="grid grid-cols-3 gap-4 font-semibold border-b pb-2">
+                    <span>Producto</span>
+                    <span>Cantidad</span>
+                    <span>Subtotal</span>
+                </div>
+                {% for product_order in order.orderproduct_set.all %}
+                    <div class="grid grid-cols-3 gap-4 py-2 border-b">
+                        <span>{{ product_order.product.name }}</span>
+                        <span>{{ product_order.quantity }}</span>
+                        <span>${{ product_order.get_subtotal|floatformat:2 }}</span>
+                    </div>
+                {% endfor %}
+                <div class="text-right font-bold text-xl mt-4">
+                    Total: ${{ order.get_total_price|floatformat:2 }}
+                </div>
+            {% else %}
+                <div class="text-red-500">Tu canasta está vacía</div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="text-center text-red-500 text-xl font-semibold">
+            No tienes ninguna orden activa.
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}
